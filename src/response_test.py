@@ -1,14 +1,10 @@
 """! @file main.py
-Measures an experimental and theoretical RC circuit response and plots
-both onto one graph.
-
-This is done using the Group 20 Arduino in serial port COM8 which holds
-the necessary main.py to generate the RC circuit experimental response.
-
+Takes account of time as it measures the number of ticks to measure its distance into a list
+This becomes graphed onto a a TK window with a Matplotlib plot
 @author Nathaniel Davis
 @author Sebastian Bessoudo
-@author reference:Spluttflob-lab0example.py
-@date 2024-1-29
+@author reference:
+@date 2024-2-21
 """
 
 import math
@@ -22,11 +18,9 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
 
 def plot_example(plot_axes, plot_canvas, xlabel, ylabel):
     """!
-    Resets the target arduino and formats the time and voltage data
+    Resets the target arduino and formats the time and distance the motor has travelled
     from the arduino into a list to be plotted.
-    Also generates a theoretical response for an RC circuit which is plotted onto
-    the same graph.
-    
+    Calls 'End' when enough data has been gathered
     @param plot_axes The function that plots the given data onto the generated axes
     @param plot_canvas The function that displays the plot
     @param xlabel The label for the plot's horizontal axis

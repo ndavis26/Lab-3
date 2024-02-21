@@ -17,23 +17,44 @@ from encoder_reader_updated import Encoder
 # Allow interrupts to display errors
 micropython.alloc_emergency_exception_buf(100)
 
-class Servo:  
+class Servo:
+    """!
+    This class uses motor control and encoder reading for the user to input a Kp value
+    and its setpoint
+    """
     def __init__(self, motor, encoder):
+        """!
+        Initializes the servo. Also sets up a 
+        @param motor 
+        @param encoder
+        """
         self.motor = motor
         self.encoder = encoder
         self.Kp = 0.1
         self.error = 0
         
     def run(self, level):
+        """!
+        sets the duty cycle for the motor to run based on
+        @param level
+        """
         self.motor.set_duty_cycle(level)
         
     def set_setpoint(self, setpoint):
+        """!
+        sets the setpoint with
+        @setpoint
+        """
         self.encoder.read()
         self.error = setpoint - self.encoder.pos
         self.PWM = self.Kp*self.error
         self.motor.set_duty_cycle(self.PWM)
         
     def set_Kp(self, Kp):
+        """!
+        sets the Kp value with
+        @Kp
+        """
         self.Kp = Kp
         
     
