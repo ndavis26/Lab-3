@@ -1,5 +1,4 @@
 """! @file encoder_reader.py
-
 @author Nathaniel Davis
 @author Sebastian Bessoudo
 @date 02-12-2024

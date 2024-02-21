@@ -1,6 +1,11 @@
-"""! @file main.py
-Takes account of time as it measures the number of ticks to measure its distance into a list
-This becomes graphed onto a a TK window with a Matplotlib plot
+"""! @file response_test.py
+This file is to be run on local python.
+This file communicates with the Nucleo on serial port COM7 to run a motor response test,
+receive info from the Nucleo, then print Position vs. Time.
+The Nucleo on COM7 should have the following files on it:
+main.py - intializes servo class and prints time vs. position data
+motor_driver_updated.py - holds MotorDriver class
+encoder_reader_updated.py - holds Encoder class
 @author Nathaniel Davis
 @author Sebastian Bessoudo
 @author reference:
@@ -29,24 +34,35 @@ def plot_example(plot_axes, plot_canvas, xlabel, ylabel):
     """
     timeExp = []
     posExp = []
-    with serial.Serial('COM7') as ser:  
+    with serial.Serial('COM7') as ser:
+        # ctrl + C
         ser.write(b'\x03')
+        # ctrl + D
         ser.write(b'\x04')
+        # 10 + Enter - designates Kp
         ser.write(b'10\r\n')
+        # 65000 + Enter - designates setpoint
         ser.write(b'65000\r\n')
+        
+        # repeatedly decode incoming lines and compile data
         while True:
-                data = ser.readline().decode('utf-8')
-                if ',' in data:
-                    squib = data.strip().split(',')
-                    try:
-                        timeExp.append(int(squib[0]))
-                        posExp.append(int(squib[1]))
-                    except ValueError:
-                        continue
-                elif 'End' in data:
-                    break
-                else:
+            data = ser.readline().decode('utf-8')
+            
+            if ',' in data:
+                squib = data.strip().split(',')
+                # tries to decode line, if not possible, skips to next line
+                try:
+                    # appends values to time and position lists
+                    timeExp.append(int(squib[0]))
+                    posExp.append(int(squib[1]))
+                except ValueError:
                     continue
+            elif 'End' in data:
+                # ends data collection if 'End' is read
+                break
+            else:
+                # if no ',' or 'End' present, continue to next line
+                continue
     
     # Draw the plot. Of course, the axes must be labeled. A grid is optional
     plot_axes.plot(timeExp, posExp)
@@ -110,6 +126,6 @@ if __name__ == "__main__":
     tk_matplot(plot_example,
                xlabel="Time (ms)",
                ylabel="Position (Ticks)",
-               title="Experimental Response, kP = 0.05")
+               title="Experimental Response, kP = 10")
 
 

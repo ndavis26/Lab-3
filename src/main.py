@@ -24,9 +24,9 @@ class Servo:
     """
     def __init__(self, motor, encoder):
         """!
-        Initializes the servo. Also sets up a 
-        @param motor 
-        @param encoder
+        Initializes the servo. Requires the already existing motor driver and encoder.
+        @param motor Currently exisiting motor driver class object
+        @param encoder Currently exisiting encoder class object
         """
         self.motor = motor
         self.encoder = encoder
@@ -35,15 +35,15 @@ class Servo:
         
     def run(self, level):
         """!
-        sets the duty cycle for the motor to run based on
-        @param level
+        Sets the duty cycle for the motor to run based on
+        @param level The level (from 0 - 100) for the motor to run at
         """
         self.motor.set_duty_cycle(level)
         
     def set_setpoint(self, setpoint):
         """!
-        sets the setpoint with
-        @setpoint
+        Directs the motor to go to a certain position
+        @param setpoint Position for the motor to travel to 
         """
         self.encoder.read()
         self.error = setpoint - self.encoder.pos
@@ -52,32 +52,46 @@ class Servo:
         
     def set_Kp(self, Kp):
         """!
-        sets the Kp value with
-        @Kp
+        Sets the Kp of the motor
+        @param Kp The Kp to set for the motor
         """
         self.Kp = Kp
         
     
 if __name__ == "__main__":  
     # run motor response test
+    # set up MotorDriver class object
     moe = MotorDriver(pyb.Pin.board.PA10, pyb.Pin.board.PB4, 1,  pyb.Pin.board.PB5, 2, 3)
+    # set up Encoder class object
     enc = Encoder(pyb.Pin.board.PC6, pyb.Pin.board.PC7, 8, 1, 2)
+    # set up Servo class object using the MotorDriver and Encoder objects specified
     serv = Servo(moe, enc)
+    
+    # number of data points to run test for (each data point is 10 ms apart)
     num = 500
+    
+    # run test ad infinitum
     while True:
+        # requests Kp
         input_kp = float(input('Please input a value for Kp: '))
         serv.set_Kp(input_kp)
+        # requests setpoint
         input_setp = int(input('Please input a value for the setpoint: '))
         serv.set_setpoint(input_setp)
         
+        # create empty lists for times and positions
         positions = []
         times = [10*x for x in range(num)]
+        
+        # repeatedly saves position value every 10 ms 
         for n in range(num):
             serv.set_setpoint(input_setp)
             time.sleep_ms(10)
             positions.append(serv.encoder.read())
             print(f"{times[n]}, {serv.encoder.read()}")
+        # stop motor at end of test
         serv.run(0)
+        # print End to signal end of data transmission
         print('End')
             
     

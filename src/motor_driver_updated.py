@@ -41,8 +41,7 @@ class MotorDriver:
         to the motor to the given level. Positive values
         cause torque in one direction, negative values
         in the opposite direction.
-        @param level A signed integer holding the duty
-               cycle of the voltage sent to the motor
+        @param level A signed integer holding the duty cycle of the voltage sent to the motor
         """
 #         print(f"Setting duty cycle to {level}")
         self.PWM = level
